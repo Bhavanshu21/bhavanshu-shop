@@ -42,7 +42,7 @@ svg{pointer-events:none}
 .hero-actions{display:flex;gap:8px;background:rgba(20,20,20,.55);backdrop-filter:blur(10px);padding:6px;border-radius:14px;border:1px solid rgba(255,255,255,.14)}
 .hbtn{width:52px;height:52px;border-radius:10px;border:0;display:grid;place-items:center;font-family:Archivo,sans-serif;font-weight:900;font-size:17px;background:#000;color:#fff}
 .hbtn.lime{background:var(--lime);color:#000;letter-spacing:-.03em}
-.hbtn.ghost{font-family:"Space Mono",monospace;font-size:13px;font-weight:400}
+.hbtn.ghost{font-family:"Space Mono",monospace;font-size:13px;font-weight:400;white-space:nowrap}
 .hbtn svg{width:22px;height:22px}
 
 /* iMessage-style notification — pops in over the hero, like the original */
@@ -186,13 +186,13 @@ svg{pointer-events:none}
 .bb-preview.d-cream{background:#efe6d2;color:#141310}
 
 /* ---------- FOOTER ---------- */
-footer{margin-top:110px;border-top:1px solid var(--line);padding:64px 22px 26px;max-width:1560px;margin-left:auto;margin-right:auto}
+footer{margin-top:110px;border-top:1px solid var(--line);padding:64px 22px 56px;max-width:1560px;margin-left:auto;margin-right:auto}
 .foot-cta h5{font-family:Archivo,sans-serif;font-weight:900;font-size:clamp(40px,6.5vw,96px);letter-spacing:-.04em;line-height:.95;margin:0 0 26px;text-transform:uppercase}
 .foot-cta h5 em{font-style:normal;color:var(--lime)}
 .foot-grid{display:flex;justify-content:space-between;gap:26px;flex-wrap:wrap;margin-top:54px;padding-top:26px;border-top:1px solid var(--line);font-size:13.5px;color:var(--muted)}
 .foot-grid a{min-height:36px;display:inline-flex;align-items:center}
 .foot-grid a:hover{color:var(--lime)}
-.foot-logo{font-family:Archivo,sans-serif;font-weight:900;font-size:clamp(30px,9.6vw,158px);letter-spacing:-.05em;line-height:.9;margin-top:44px;color:#fff;white-space:nowrap}
+.foot-logo{font-family:Archivo,sans-serif;font-weight:900;font-size:clamp(30px,9.6vw,158px);letter-spacing:-.05em;line-height:1;margin-top:44px;color:#fff;white-space:nowrap}
 .foot-logo span{color:var(--lime)}
 
 /* WhatsApp float */
@@ -237,7 +237,7 @@ footer{margin-top:110px;border-top:1px solid var(--line);padding:64px 22px 26px;
 @keyframes mq{to{transform:translateX(-50%)}}
 .stats{max-width:1560px;margin:0 auto;padding:54px 22px 10px;display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
 .stat{border:1px solid var(--line);border-radius:16px;padding:22px}
-.stat b{font-family:Archivo,sans-serif;font-size:clamp(34px,4vw,54px);letter-spacing:-.04em;display:block;line-height:1}
+.stat b{font-family:Archivo,sans-serif;font-size:clamp(34px,4vw,54px);letter-spacing:-.04em;display:block;line-height:1;white-space:nowrap}
 .stat b em{font-style:normal;color:var(--lime)}
 .stat span{color:var(--muted);font-size:13px;display:block;margin-top:8px;line-height:1.5}
 .process{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:10px}
@@ -286,8 +286,10 @@ footer{margin-top:110px;border-top:1px solid var(--line);padding:64px 22px 26px;
   .pitch{display:none}
   .btn-call{gap:10px;padding:0 13px}
   .hero-actions .hbtn{width:46px;height:46px}
+  .hero-actions .hbtn.ghost{width:auto;padding:0 11px;font-size:11px}
   .founders{padding:40px 22px}
-  .tunnel-track{height:480vh}
+  .tunnel-track{height:440vh}
+  .intro{padding-top:64px}
   .zw span{font-size:15px}
   .notif .msg{white-space:normal}
   .hero .bg{object-position:36% center}
@@ -303,6 +305,14 @@ footer{margin-top:110px;border-top:1px solid var(--line);padding:64px 22px 26px;
   .foot-logo{font-size:11.5vw}
   .notif{padding:10px 16px 10px 10px;gap:10px}
   .notif img{width:52px;height:52px}
+  /* numbers & buying steps: guaranteed stacked, never squeezed four-across */
+  .stats{grid-template-columns:1fr 1fr;gap:12px;padding:44px 16px 6px}
+  .stat{padding:16px 14px}
+  .stat b{font-size:30px}
+  .stat span{font-size:12.5px}
+  .process{grid-template-columns:1fr;gap:12px}
+  .step{padding:20px 16px}
+  .section{padding-top:64px}
 }
 /* short viewports (landscape phones, small windows): shrink the menu type so
    every link fits; the overlay itself scrolls as a fallback */
@@ -673,7 +683,7 @@ function render(){
  var tp=clamp01(-tr.top/(tr.height-vh));
  hint.style.opacity=String(tp<0.02?1:0);
  if(!paused||render._force){
-   var cam=tp*(K+0.6);
+   var cam=tp*(K+1.15);
    for(var i=0;i<K;i++){
      var rel=i-cam, f=zFrames[i];
      if(rel<-1.15||rel>K){f.style.display='none';continue;}
@@ -705,6 +715,30 @@ giantSec.addEventListener('mousemove',function(e){
  giantSec.style.setProperty('--mx',((e.clientX-r.left)/r.width*100)+'%');
  giantSec.style.setProperty('--my',((e.clientY-r.top)/r.height*100)+'%');
 });
+
+/* Fit the nowrap display words (giant "bhavanshu", footer wordmark) to the
+   screen: with the real display font loaded they can measure wider than a
+   phone viewport and clip at the edge, so shrink the font just enough to fit.
+   Desktop widths are untouched — this only engages when a word overflows. */
+function fitLine(el){
+ if(!el)return;
+ el.style.fontSize='';
+ var prevAlign=el.style.textAlign;
+ el.style.textAlign='left'; /* measure true content width, not the centred overflow */
+ var w=el.scrollWidth, cw=el.clientWidth;
+ el.style.textAlign=prevAlign;
+ if(w>cw&&w>0&&cw>0){
+  var fs=parseFloat(window.getComputedStyle(el).fontSize);
+  el.style.fontSize=(fs*cw/w*0.998)+'px';
+ }
+}
+function fitGiants(){
+ fitLine(giantWord);
+ fitLine(document.querySelector('.foot-logo'));
+}
+window.addEventListener('resize',fitGiants);
+if(document.fonts&&document.fonts.ready){document.fonts.ready.then(fitGiants);}
+fitGiants();
 
 /* ---------- Hero slideshow + tools ---------- */
 var heroEl=hero, slideTimer=null;
